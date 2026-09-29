@@ -1,0 +1,1166 @@
+{
+  "reportId": "price-projection-walk-forward-1786546708882",
+  "generatedAt": "2026-08-12T15:14:43.325Z",
+  "snapshot": {
+    "path": "data/candle-snapshot.json.gz",
+    "savedAtMs": 1786546708882,
+    "sourceSeries": 33,
+    "evaluatedSeries": 15
+  },
+  "configuration": {
+    "models": [
+      "volatility-baseline-v1",
+      "analogue-volatility-v2",
+      "analogue-v1"
+    ],
+    "horizonDays": [
+      5,
+      10,
+      20
+    ],
+    "chronologicalSplit": {
+      "development": [
+        0.4,
+        0.6
+      ],
+      "validation": [
+        0.6,
+        0.8
+      ],
+      "test": [
+        0.8,
+        1
+      ]
+    },
+    "originSeparationBars": "horizonBars (calendar-day horizon resolved per timeframe)",
+    "maxOriginsPerPhase": 30,
+    "trials": 3,
+    "tieRule": "within 1% of minimum validation pinball chooses simpler model",
+    "frozenTestModels": [
+      "volatility-baseline-v1"
+    ],
+    "scoringPath": "scorePrequentialForecasts-per-step-multiplicative-scale-pre-aci",
+    "notes": [
+      "Residual scoring uses scorePrequentialForecasts (per-step multiplicative interval scale \u03bb), identical to live buildCalibration diagnostics.",
+      "ACI-lite applyPathCalibration adjusts chart factors only; promotion coverage matches UI BT50/BT80 (pre-ACI).",
+      "For volatility-baseline-v1, pinball-vs-baseline and MAE-vs-zero are identity (vacuous) because the median is pinned at zero log-return.",
+      "Vol model is har-multiperiod-rv (mean-reverting HAR cascade); still zero-median point forecast."
+    ]
+  },
+  "selection": {
+    "selectedModel": "volatility-baseline-v1",
+    "productionModel": "volatility-baseline-v1",
+    "fallbackReason": "frozen-test-promotion-failed",
+    "minimumValidationLoss": 0.02219607272102143,
+    "eligibleWithinOnePercent": [
+      "volatility-baseline-v1"
+    ]
+  },
+  "promotion": {
+    "passed": false,
+    "gates": {
+      "pinballNoWorseThanBaseline": true,
+      "maeNoWorseThanZero": true,
+      "pinballGateVacuousForZeroMedianBaseline": true,
+      "maeGateVacuousForZeroMedianBaseline": true,
+      "brierNoWorseThanClimatology": true,
+      "pooledCoverage50WithinFivePoints": false,
+      "pooledCoverage80WithinFivePoints": true,
+      "noMaterialSubgroupUndercoverage": true
+    },
+    "subgroupFailures": [],
+    "evidenceStatus": "unvalidated",
+    "scoringPath": "scorePrequentialForecasts-per-step-multiplicative-scale-pre-aci"
+  },
+  "summary": {
+    "validation": {
+      "volatility-baseline-v1": {
+        "samples": 246,
+        "meanPinballLoss": 0.02219607272102143,
+        "meanAbsoluteLogError": 0.05582371361555047,
+        "zeroReturnMeanAbsoluteLogError": 0.05582371361555047,
+        "brierScore": 0.2672329929618734,
+        "climatologyBrierScore": 0.2723979034544886,
+        "coverage50": 0.5465116279069767,
+        "coverage80": 0.813953488372093,
+        "meanInterval50Width": 0.1108924672718938,
+        "meanInterval80Width": 0.21789836797060394,
+        "meanInterval50Score": 0.21451553810685062,
+        "meanInterval80Score": 0.345480687942164
+      },
+      "analogue-volatility-v2": {
+        "samples": 240,
+        "meanPinballLoss": 0.023360542750727045,
+        "meanAbsoluteLogError": 0.06013744757341869,
+        "zeroReturnMeanAbsoluteLogError": 0.056309270855476566,
+        "brierScore": 0.26696028177167785,
+        "climatologyBrierScore": 0.2738785525099872,
+        "coverage50": 0.5857988165680473,
+        "coverage80": 0.8106508875739645,
+        "meanInterval50Width": 0.11223499959751665,
+        "meanInterval80Width": 0.2288520697310076,
+        "meanInterval50Score": 0.21842326563960107,
+        "meanInterval80Score": 0.37248866730367697
+      },
+      "analogue-v1": {
+        "samples": 241,
+        "meanPinballLoss": 0.02254201471625995,
+        "meanAbsoluteLogError": 0.0594960040287108,
+        "zeroReturnMeanAbsoluteLogError": 0.05607468510142426,
+        "brierScore": 0.2672952867938534,
+        "climatologyBrierScore": 0.2704341423094477,
+        "coverage50": 0.5207100591715976,
+        "coverage80": 0.7633136094674556,
+        "meanInterval50Width": 0.0991416100319855,
+        "meanInterval80Width": 0.1889556664757395,
+        "meanInterval50Score": 0.2121317715393549,
+        "meanInterval80Score": 0.35158205206789406
+      }
+    },
+    "test": {
+      "volatility-baseline-v1": {
+        "samples": 224,
+        "meanPinballLoss": 0.014259035542575267,
+        "meanAbsoluteLogError": 0.0391461340821048,
+        "zeroReturnMeanAbsoluteLogError": 0.0391461340821048,
+        "brierScore": 0.25598924627636493,
+        "climatologyBrierScore": 0.2691396774523743,
+        "coverage50": 0.5683060109289617,
+        "coverage80": 0.8469945355191257,
+        "meanInterval50Width": 0.07312768203667482,
+        "meanInterval80Width": 0.143852587045127,
+        "meanInterval50Score": 0.13567785468698437,
+        "meanInterval80Score": 0.20444304335683267
+      }
+    }
+  },
+  "subgroups": [
+    {
+      "group": "8h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 21,
+        "meanPinballLoss": 0.019346190370897704,
+        "meanAbsoluteLogError": 0.051178175086043935,
+        "zeroReturnMeanAbsoluteLogError": 0.051178175086043935,
+        "brierScore": 0.25562924625065814,
+        "climatologyBrierScore": 0.30611912710410444,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:5d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 21,
+        "meanPinballLoss": 0.019871947970927745,
+        "meanAbsoluteLogError": 0.050918617090076106,
+        "zeroReturnMeanAbsoluteLogError": 0.051178175086043935,
+        "brierScore": 0.2412239507036761,
+        "climatologyBrierScore": 0.30611912710410444,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:5d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 21,
+        "meanPinballLoss": 0.01995234076496798,
+        "meanAbsoluteLogError": 0.05247974716415247,
+        "zeroReturnMeanAbsoluteLogError": 0.051178175086043935,
+        "brierScore": 0.25094687033404917,
+        "climatologyBrierScore": 0.30611912710410444,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.023582531607690495,
+        "meanAbsoluteLogError": 0.06629518550582174,
+        "zeroReturnMeanAbsoluteLogError": 0.06629518550582174,
+        "brierScore": 0.2801901394542312,
+        "climatologyBrierScore": 0.29525,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:10d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.024862054109776165,
+        "meanAbsoluteLogError": 0.06886656222371687,
+        "zeroReturnMeanAbsoluteLogError": 0.06629518550582174,
+        "brierScore": 0.2722618928505893,
+        "climatologyBrierScore": 0.29525,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:10d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.025984077992126466,
+        "meanAbsoluteLogError": 0.07235073081026627,
+        "zeroReturnMeanAbsoluteLogError": 0.06629518550582174,
+        "brierScore": 0.26767684021044125,
+        "climatologyBrierScore": 0.29525,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "4h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 72,
+        "meanPinballLoss": 0.01842931921179243,
+        "meanAbsoluteLogError": 0.04499476288103113,
+        "zeroReturnMeanAbsoluteLogError": 0.04499476288103113,
+        "brierScore": 0.2539015646050093,
+        "climatologyBrierScore": 0.259517476870523,
+        "coverage50": 0.5833333333333334,
+        "coverage80": 0.75,
+        "meanInterval50Width": 0.07991792415055049,
+        "meanInterval80Width": 0.14835917368127993,
+        "meanInterval50Score": 0.16897895312117145,
+        "meanInterval80Score": 0.2767991007729264
+      }
+    },
+    {
+      "group": "4h:5d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 72,
+        "meanPinballLoss": 0.018861483075214583,
+        "meanAbsoluteLogError": 0.04410707349701365,
+        "zeroReturnMeanAbsoluteLogError": 0.04499476288103113,
+        "brierScore": 0.24926853386030684,
+        "climatologyBrierScore": 0.259517476870523,
+        "coverage50": 0.6111111111111112,
+        "coverage80": 0.7638888888888888,
+        "meanInterval50Width": 0.0799348836090001,
+        "meanInterval80Width": 0.14738999792335225,
+        "meanInterval50Score": 0.1733865506980728,
+        "meanInterval80Score": 0.29438987846114856
+      }
+    },
+    {
+      "group": "4h:5d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 72,
+        "meanPinballLoss": 0.018363301083176096,
+        "meanAbsoluteLogError": 0.04437262567802244,
+        "zeroReturnMeanAbsoluteLogError": 0.04499476288103113,
+        "brierScore": 0.2460513818621821,
+        "climatologyBrierScore": 0.259517476870523,
+        "coverage50": 0.5694444444444444,
+        "coverage80": 0.7638888888888888,
+        "meanInterval50Width": 0.07582376827280651,
+        "meanInterval80Width": 0.13739181010413215,
+        "meanInterval50Score": 0.1669418692262298,
+        "meanInterval80Score": 0.2794702710724887
+      }
+    },
+    {
+      "group": "4h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 36,
+        "meanPinballLoss": 0.02828726050527902,
+        "meanAbsoluteLogError": 0.07339605638093066,
+        "zeroReturnMeanAbsoluteLogError": 0.07339605638093066,
+        "brierScore": 0.261613956912492,
+        "climatologyBrierScore": 0.2547789352471112,
+        "coverage50": 0.5277777777777778,
+        "coverage80": 0.9166666666666666,
+        "meanInterval50Width": 0.16114198930974682,
+        "meanInterval80Width": 0.2942962801067939,
+        "meanInterval50Score": 0.2720739658782033,
+        "meanInterval80Score": 0.4047222120091802
+      }
+    },
+    {
+      "group": "4h:10d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 36,
+        "meanPinballLoss": 0.029900352495468217,
+        "meanAbsoluteLogError": 0.08060535291976856,
+        "zeroReturnMeanAbsoluteLogError": 0.07339605638093066,
+        "brierScore": 0.2924890450424807,
+        "climatologyBrierScore": 0.2527934767339211,
+        "coverage50": 0.5833333333333334,
+        "coverage80": 0.8333333333333334,
+        "meanInterval50Width": 0.15491053536898253,
+        "meanInterval80Width": 0.29595565699639387,
+        "meanInterval50Score": 0.2691350027053019,
+        "meanInterval80Score": 0.44214207487651586
+      }
+    },
+    {
+      "group": "4h:10d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 36,
+        "meanPinballLoss": 0.029949292376322892,
+        "meanAbsoluteLogError": 0.08107429545097972,
+        "zeroReturnMeanAbsoluteLogError": 0.07339605638093066,
+        "brierScore": 0.2840922960196931,
+        "climatologyBrierScore": 0.2538794463738481,
+        "coverage50": 0.5833333333333334,
+        "coverage80": 0.8055555555555556,
+        "meanInterval50Width": 0.14374000341274668,
+        "meanInterval80Width": 0.2537213660401915,
+        "meanInterval50Score": 0.26467712880370575,
+        "meanInterval80Score": 0.4444249839459117
+      }
+    },
+    {
+      "group": "4h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 18,
+        "meanPinballLoss": 0.0470966660790764,
+        "meanAbsoluteLogError": 0.12030290879469116,
+        "zeroReturnMeanAbsoluteLogError": 0.12030290879469116,
+        "brierScore": 0.24670974728876757,
+        "climatologyBrierScore": 0.26193673435337933,
+        "coverage50": 0.4444444444444444,
+        "coverage80": 0.7222222222222222,
+        "meanInterval50Width": 0.16692662275876474,
+        "meanInterval80Width": 0.3495478066368559,
+        "meanInterval50Score": 0.4105629167535807,
+        "meanInterval80Score": 0.7318659773622986
+      }
+    },
+    {
+      "group": "4h:20d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 18,
+        "meanPinballLoss": 0.04957487629641711,
+        "meanAbsoluteLogError": 0.12823442480727673,
+        "zeroReturnMeanAbsoluteLogError": 0.12030290879469116,
+        "brierScore": 0.2653710135584438,
+        "climatologyBrierScore": 0.2645791150107954,
+        "coverage50": 0.5,
+        "coverage80": 0.7777777777777778,
+        "meanInterval50Width": 0.19909522696027881,
+        "meanInterval80Width": 0.40556568722637976,
+        "meanInterval50Score": 0.41923792920521397,
+        "meanInterval80Score": 0.7779376099077387
+      }
+    },
+    {
+      "group": "4h:20d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 18,
+        "meanPinballLoss": 0.045501774346269314,
+        "meanAbsoluteLogError": 0.12236230755136285,
+        "zeroReturnMeanAbsoluteLogError": 0.12030290879469116,
+        "brierScore": 0.2644543000598728,
+        "climatologyBrierScore": 0.26903253413636435,
+        "coverage50": 0.3888888888888889,
+        "coverage80": 0.7777777777777778,
+        "meanInterval50Width": 0.1892620469553362,
+        "meanInterval80Width": 0.32550411351622277,
+        "meanInterval50Score": 0.40718283021259605,
+        "meanInterval80Score": 0.6506550979312461
+      }
+    },
+    {
+      "group": "1h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 21,
+        "meanPinballLoss": 0.014353408640757697,
+        "meanAbsoluteLogError": 0.03534245766718803,
+        "zeroReturnMeanAbsoluteLogError": 0.03534245766718803,
+        "brierScore": 0.2527864969308468,
+        "climatologyBrierScore": 0.2511451898043176,
+        "coverage50": 0.6190476190476191,
+        "coverage80": 0.9047619047619048,
+        "meanInterval50Width": 0.08699808623887074,
+        "meanInterval80Width": 0.22165221822596964,
+        "meanInterval50Score": 0.14434200838552305,
+        "meanInterval80Score": 0.23435239174318379
+      }
+    },
+    {
+      "group": "1h:5d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 21,
+        "meanPinballLoss": 0.01522422669960206,
+        "meanAbsoluteLogError": 0.0382089479578728,
+        "zeroReturnMeanAbsoluteLogError": 0.03534245766718803,
+        "brierScore": 0.26588152176915547,
+        "climatologyBrierScore": 0.25348232127600123,
+        "coverage50": 0.6190476190476191,
+        "coverage80": 0.9047619047619048,
+        "meanInterval50Width": 0.09120164530057538,
+        "meanInterval80Width": 0.23733125355127646,
+        "meanInterval50Score": 0.14902136066707422,
+        "meanInterval80Score": 0.2534103014707577
+      }
+    },
+    {
+      "group": "1h:5d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 21,
+        "meanPinballLoss": 0.01495876363832608,
+        "meanAbsoluteLogError": 0.037951758238914515,
+        "zeroReturnMeanAbsoluteLogError": 0.03534245766718803,
+        "brierScore": 0.2614809054856441,
+        "climatologyBrierScore": 0.25348232127600123,
+        "coverage50": 0.5238095238095238,
+        "coverage80": 0.7142857142857143,
+        "meanInterval50Width": 0.050705955315225135,
+        "meanInterval80Width": 0.14566847126004834,
+        "meanInterval50Score": 0.13594479895262504,
+        "meanInterval80Score": 0.23279686338892067
+      }
+    },
+    {
+      "group": "1h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.01751798114215903,
+        "meanAbsoluteLogError": 0.03453819769069031,
+        "zeroReturnMeanAbsoluteLogError": 0.03453819769069031,
+        "brierScore": 0.2535717079826004,
+        "climatologyBrierScore": 0.28926034580498866,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "1h:10d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.01997028171367838,
+        "meanAbsoluteLogError": 0.04898097408390696,
+        "zeroReturnMeanAbsoluteLogError": 0.03453819769069031,
+        "brierScore": 0.2500753739266497,
+        "climatologyBrierScore": 0.32395882149155963,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "1h:10d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.01555432219731363,
+        "meanAbsoluteLogError": 0.04109322780734383,
+        "zeroReturnMeanAbsoluteLogError": 0.03453819769069031,
+        "brierScore": 0.2918024104704687,
+        "climatologyBrierScore": 0.2704107457797934,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "1h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 3,
+        "meanPinballLoss": 0.03628247050729449,
+        "meanAbsoluteLogError": 0.07250809096039529,
+        "zeroReturnMeanAbsoluteLogError": 0.07250809096039529,
+        "brierScore": 0.28188416727306526,
+        "climatologyBrierScore": 0.25,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "1h:20d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 3,
+        "meanPinballLoss": 0.03182171758136732,
+        "meanAbsoluteLogError": 0.08319150318438245,
+        "zeroReturnMeanAbsoluteLogError": 0.07250809096039529,
+        "brierScore": 0.2674665031612284,
+        "climatologyBrierScore": 0.25,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "30m:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 12,
+        "meanPinballLoss": 0.010665708037591275,
+        "meanAbsoluteLogError": 0.02388919004256211,
+        "zeroReturnMeanAbsoluteLogError": 0.02388919004256211,
+        "brierScore": 0.3589421935507254,
+        "climatologyBrierScore": 0.28303009046695915,
+        "coverage50": 0,
+        "coverage80": 0.6666666666666666,
+        "meanInterval50Width": 0.06342025460416888,
+        "meanInterval80Width": 0.11311584409366349,
+        "meanInterval50Score": 0.1087998268910625,
+        "meanInterval80Score": 0.12627630054880554
+      }
+    },
+    {
+      "group": "30m:5d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 12,
+        "meanPinballLoss": 0.01239463275712529,
+        "meanAbsoluteLogError": 0.03155115013643694,
+        "zeroReturnMeanAbsoluteLogError": 0.02388919004256211,
+        "brierScore": 0.32730002361570315,
+        "climatologyBrierScore": 0.2618690375982043,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "30m:5d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 12,
+        "meanPinballLoss": 0.011699455161169681,
+        "meanAbsoluteLogError": 0.03188627324980874,
+        "zeroReturnMeanAbsoluteLogError": 0.02388919004256211,
+        "brierScore": 0.33535006394547545,
+        "climatologyBrierScore": 0.2618690375982043,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "30m:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 6,
+        "meanPinballLoss": 0.022219019277866108,
+        "meanAbsoluteLogError": 0.043891709220127036,
+        "zeroReturnMeanAbsoluteLogError": 0.043891709220127036,
+        "brierScore": 0.40586575548378345,
+        "climatologyBrierScore": 0.23611111111111116,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "30m:10d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 5,
+        "meanPinballLoss": 0.026194722469867697,
+        "meanAbsoluteLogError": 0.07897346145567333,
+        "zeroReturnMeanAbsoluteLogError": 0.0442025710513414,
+        "brierScore": 0.44001425223654034,
+        "climatologyBrierScore": 0.2611111111111112,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "30m:10d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 5,
+        "meanPinballLoss": 0.024609229968418432,
+        "meanAbsoluteLogError": 0.07575569818616781,
+        "zeroReturnMeanAbsoluteLogError": 0.043901702760213754,
+        "brierScore": 0.3862217928780062,
+        "climatologyBrierScore": 0.2611111111111112,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 22,
+        "meanPinballLoss": 0.02020185935519927,
+        "meanAbsoluteLogError": 0.055763708818326485,
+        "zeroReturnMeanAbsoluteLogError": 0.055763708818326485,
+        "brierScore": 0.27480158173251656,
+        "climatologyBrierScore": 0.27344181753882,
+        "coverage50": 0.5454545454545454,
+        "coverage80": 0.8636363636363636,
+        "meanInterval50Width": 0.11347283783130312,
+        "meanInterval80Width": 0.22345854852533556,
+        "meanInterval50Score": 0.19035504544113707,
+        "meanInterval80Score": 0.2931512144225621
+      }
+    },
+    {
+      "group": "2h:5d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 22,
+        "meanPinballLoss": 0.019915057396484845,
+        "meanAbsoluteLogError": 0.0544265882505722,
+        "zeroReturnMeanAbsoluteLogError": 0.055763708818326485,
+        "brierScore": 0.24670607326535698,
+        "climatologyBrierScore": 0.2714782575249827,
+        "coverage50": 0.5454545454545454,
+        "coverage80": 0.8636363636363636,
+        "meanInterval50Width": 0.0971216091932652,
+        "meanInterval80Width": 0.23297170852441454,
+        "meanInterval50Score": 0.18477767480627544,
+        "meanInterval80Score": 0.2960411600154075
+      }
+    },
+    {
+      "group": "2h:5d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 22,
+        "meanPinballLoss": 0.02088867517542915,
+        "meanAbsoluteLogError": 0.057117885090119905,
+        "zeroReturnMeanAbsoluteLogError": 0.055763708818326485,
+        "brierScore": 0.2614225649132098,
+        "climatologyBrierScore": 0.2714782575249827,
+        "coverage50": 0.36363636363636365,
+        "coverage80": 0.7272727272727273,
+        "meanInterval50Width": 0.07497448864040114,
+        "meanInterval80Width": 0.18132800862284204,
+        "meanInterval50Score": 0.18717938395896236,
+        "meanInterval80Score": 0.30434918028510577
+      }
+    },
+    {
+      "group": "2h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.02327942587092265,
+        "meanAbsoluteLogError": 0.06701839474227725,
+        "zeroReturnMeanAbsoluteLogError": 0.06701839474227725,
+        "brierScore": 0.25798096025719325,
+        "climatologyBrierScore": 0.3866876732174352,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:10d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.0243331383191001,
+        "meanAbsoluteLogError": 0.06286165904113503,
+        "zeroReturnMeanAbsoluteLogError": 0.06701839474227725,
+        "brierScore": 0.2411141307862684,
+        "climatologyBrierScore": 0.40683807319223997,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:10d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 10,
+        "meanPinballLoss": 0.023263583250487295,
+        "meanAbsoluteLogError": 0.06869122842987348,
+        "zeroReturnMeanAbsoluteLogError": 0.06701839474227725,
+        "brierScore": 0.2514261252201796,
+        "climatologyBrierScore": 0.36783807319223993,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 4,
+        "meanPinballLoss": 0.01923829228738203,
+        "meanAbsoluteLogError": 0.03461126451097683,
+        "zeroReturnMeanAbsoluteLogError": 0.03461126451097683,
+        "brierScore": 0.28439906228642087,
+        "climatologyBrierScore": 0.29861111111111116,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:20d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 1,
+        "meanPinballLoss": 0.016155462211818305,
+        "meanAbsoluteLogError": 0.03104413172187498,
+        "zeroReturnMeanAbsoluteLogError": 0.020710065589103457,
+        "brierScore": 0.31184728204265066,
+        "climatologyBrierScore": 0.25,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:20d",
+      "modelId": "analogue-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 1,
+        "meanPinballLoss": 0.01365275960137633,
+        "meanAbsoluteLogError": 0.034516514538304496,
+        "zeroReturnMeanAbsoluteLogError": 0.020710065589103457,
+        "brierScore": 0.3359218449203973,
+        "climatologyBrierScore": 0.25,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "1h:20d",
+      "modelId": "analogue-volatility-v2",
+      "phase": "validation",
+      "summary": {
+        "samples": 2,
+        "meanPinballLoss": 0.05853633785533648,
+        "meanAbsoluteLogError": 0.1832923862741346,
+        "zeroReturnMeanAbsoluteLogError": 0.1081229136483391,
+        "brierScore": 0.3330339928315529,
+        "climatologyBrierScore": 0.25,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 1,
+        "meanPinballLoss": 0.024206474452227473,
+        "meanAbsoluteLogError": 0.05705770600767154,
+        "zeroReturnMeanAbsoluteLogError": 0.05705770600767154,
+        "brierScore": 0.23398262866913822,
+        "climatologyBrierScore": 0.25,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 19,
+        "meanPinballLoss": 0.008150634865111545,
+        "meanAbsoluteLogError": 0.023720711351393784,
+        "zeroReturnMeanAbsoluteLogError": 0.023720711351393784,
+        "brierScore": 0.2646586284553849,
+        "climatologyBrierScore": 0.2637855239086382,
+        "coverage50": 0.7272727272727273,
+        "coverage80": 1,
+        "meanInterval50Width": 0.0594409133391136,
+        "meanInterval80Width": 0.08308356326340152,
+        "meanInterval50Score": 0.06314558356386786,
+        "meanInterval80Score": 0.08308356326340152
+      }
+    },
+    {
+      "group": "8h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 9,
+        "meanPinballLoss": 0.01226813479577256,
+        "meanAbsoluteLogError": 0.030981155751049497,
+        "zeroReturnMeanAbsoluteLogError": 0.030981155751049497,
+        "brierScore": 0.255300142250638,
+        "climatologyBrierScore": 0.30406541320231795,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "8h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 3,
+        "meanPinballLoss": 0.023133897201096876,
+        "meanAbsoluteLogError": 0.06064532916916223,
+        "zeroReturnMeanAbsoluteLogError": 0.06064532916916223,
+        "brierScore": 0.23397367067974037,
+        "climatologyBrierScore": 0.3148148148148148,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "4h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 70,
+        "meanPinballLoss": 0.015056424219735704,
+        "meanAbsoluteLogError": 0.04086656660098319,
+        "zeroReturnMeanAbsoluteLogError": 0.04086656660098319,
+        "brierScore": 0.25299340300590006,
+        "climatologyBrierScore": 0.2551907794569218,
+        "coverage50": 0.44285714285714284,
+        "coverage80": 0.7714285714285715,
+        "meanInterval50Width": 0.04900697988991151,
+        "meanInterval80Width": 0.11535503347004794,
+        "meanInterval50Score": 0.13646005367128322,
+        "meanInterval80Score": 0.21058640228377165
+      }
+    },
+    {
+      "group": "4h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 33,
+        "meanPinballLoss": 0.021875761310818077,
+        "meanAbsoluteLogError": 0.06121710313756262,
+        "zeroReturnMeanAbsoluteLogError": 0.06121710313756262,
+        "brierScore": 0.251666949625345,
+        "climatologyBrierScore": 0.2568118494072167,
+        "coverage50": 0.5454545454545454,
+        "coverage80": 0.8484848484848485,
+        "meanInterval50Width": 0.11583633331267296,
+        "meanInterval80Width": 0.2018540812053757,
+        "meanInterval50Score": 0.201845575985502,
+        "meanInterval80Score": 0.30124985300851126
+      }
+    },
+    {
+      "group": "4h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 15,
+        "meanPinballLoss": 0.02480249849799885,
+        "meanAbsoluteLogError": 0.0750622131911236,
+        "zeroReturnMeanAbsoluteLogError": 0.0750622131911236,
+        "brierScore": 0.2612302220097716,
+        "climatologyBrierScore": 0.25231672787605325,
+        "coverage50": 0.4666666666666667,
+        "coverage80": 0.8,
+        "meanInterval50Width": 0.13384422965456555,
+        "meanInterval80Width": 0.28591725129217616,
+        "meanInterval50Score": 0.23038764789218238,
+        "meanInterval80Score": 0.34006104108276136
+      }
+    },
+    {
+      "group": "1h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 18,
+        "meanPinballLoss": 0.007522288431007652,
+        "meanAbsoluteLogError": 0.01930853017099212,
+        "zeroReturnMeanAbsoluteLogError": 0.01930853017099212,
+        "brierScore": 0.263853315138536,
+        "climatologyBrierScore": 0.27968215332991414,
+        "coverage50": 0.7222222222222222,
+        "coverage80": 0.9444444444444444,
+        "meanInterval50Width": 0.05259721942060781,
+        "meanInterval80Width": 0.10871784314234816,
+        "meanInterval50Score": 0.0695893462631368,
+        "meanInterval80Score": 0.11382066918162212
+      }
+    },
+    {
+      "group": "1h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 8,
+        "meanPinballLoss": 0.012022127598509322,
+        "meanAbsoluteLogError": 0.029815899051739876,
+        "zeroReturnMeanAbsoluteLogError": 0.029815899051739876,
+        "brierScore": 0.25691488679442026,
+        "climatologyBrierScore": 0.3055036157024793,
+        "coverage50": 0.6666666666666666,
+        "coverage80": 1,
+        "meanInterval50Width": 0.08625301520840356,
+        "meanInterval80Width": 0.22646871060730792,
+        "meanInterval50Score": 0.10945252662623421,
+        "meanInterval80Score": 0.22646871060730792
+      }
+    },
+    {
+      "group": "1h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 3,
+        "meanPinballLoss": 0.011402923681933382,
+        "meanAbsoluteLogError": 0.01938669715930202,
+        "zeroReturnMeanAbsoluteLogError": 0.01938669715930202,
+        "brierScore": 0.29596233330627647,
+        "climatologyBrierScore": 0.3333333333333333,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "30m:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 12,
+        "meanPinballLoss": 0.0075720785360816195,
+        "meanAbsoluteLogError": 0.018236117549859543,
+        "zeroReturnMeanAbsoluteLogError": 0.018236117549859543,
+        "brierScore": 0.24116638313992259,
+        "climatologyBrierScore": 0.2717595298823836,
+        "coverage50": 0.8333333333333334,
+        "coverage80": 0.75,
+        "meanInterval50Width": 0.06017843732490941,
+        "meanInterval80Width": 0.0955923161221317,
+        "meanInterval50Score": 0.08503078652637754,
+        "meanInterval80Score": 0.11540810803982415
+      }
+    },
+    {
+      "group": "30m:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 6,
+        "meanPinballLoss": 0.01114469475378479,
+        "meanAbsoluteLogError": 0.02772857330180341,
+        "zeroReturnMeanAbsoluteLogError": 0.02772857330180341,
+        "brierScore": 0.25322657306330576,
+        "climatologyBrierScore": 0.3425,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:5d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 18,
+        "meanPinballLoss": 0.008045337122230807,
+        "meanAbsoluteLogError": 0.02447967645079236,
+        "zeroReturnMeanAbsoluteLogError": 0.02447967645079236,
+        "brierScore": 0.25793503768452714,
+        "climatologyBrierScore": 0.25992717900996043,
+        "coverage50": 0.6666666666666666,
+        "coverage80": 1,
+        "meanInterval50Width": 0.060845118356085,
+        "meanInterval80Width": 0.10907525394453271,
+        "meanInterval50Score": 0.07884921659131257,
+        "meanInterval80Score": 0.10907525394453271
+      }
+    },
+    {
+      "group": "2h:10d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 8,
+        "meanPinballLoss": 0.013099597719391488,
+        "meanAbsoluteLogError": 0.03440677762768941,
+        "zeroReturnMeanAbsoluteLogError": 0.03440677762768941,
+        "brierScore": 0.2551593653159501,
+        "climatologyBrierScore": 0.30534578741965107,
+        "coverage50": 1,
+        "coverage80": 1,
+        "meanInterval50Width": 0.148300785348717,
+        "meanInterval80Width": 0.21317292281535183,
+        "meanInterval50Score": 0.148300785348717,
+        "meanInterval80Score": 0.21317292281535183
+      }
+    },
+    {
+      "group": "2h:20d",
+      "modelId": "volatility-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 2,
+        "meanPinballLoss": 0.019163376861515705,
+        "meanAbsoluteLogError": 0.05259139572911111,
+        "zeroReturnMeanAbsoluteLogError": 0.05259139572911111,
+        "brierScore": 0.2952133255433218,
+        "climatologyBrierScore": 0.2777777777777778,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    }
+  ],
+  "note": "Non-locked recheck on current candle-snapshot; C50 gate failed (~0.568). Not used for production MODEL_EVIDENCE."
+}

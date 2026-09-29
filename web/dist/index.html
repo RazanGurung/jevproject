@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BTC</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=overlays-content">
+<meta name="theme-color" content="#07090d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="pez-api-base" content="">
+<link rel="stylesheet" href="/dist/styles-QVEGTWGI.css">
+</head>
+<body class="classic-theme pez-v2 pez-ultimate">
+<div id="startup-splash" class="startup-splash">
+  <div class="startup-splash-mark">
+    <div class="startup-splash-logo">PEZ</div>
+    <div class="startup-splash-tag">Terminal</div>
+  </div>
+  <div class="startup-splash-status"><span class="startup-splash-spinner"></span><span>Connecting</span></div>
+</div>
+<div id="spread-indicator"></div>
+<div id="resumeRecoveryOverlay" class="resume-recovery-overlay" hidden aria-hidden="true">
+  <div class="resume-recovery-card">
+    <div class="resume-recovery-spinner" aria-hidden="true"></div>
+    <div class="resume-recovery-copy">
+      <div class="resume-recovery-title">Live Reconnect</div>
+      <div class="resume-recovery-message" data-role="message">Reconnecting live data...</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <!-- Controls row first for density: brand + markets left, tools + live status right. -->
+  <div class="topbar-controls">
+    <div class="topbar-brand" aria-hidden="true">PEZ</div>
+    <div class="coin-cat-tabs">
+      <button class="coin-tab coin-cat-btn" data-action="toggleCoinDropdown" data-arg="crypto" aria-expanded="false" aria-controls="coinDropdown">Crypto <span class="popover-chevron" aria-hidden="true">▾</span></button>
+      <button class="coin-tab coin-cat-btn" data-action="toggleCoinDropdown" data-arg="indices" aria-expanded="false" aria-controls="coinDropdown">Indices <span class="popover-chevron" aria-hidden="true">▾</span></button>
+      <button class="coin-tab coin-cat-btn" data-action="toggleCoinDropdown" data-arg="commodities" aria-expanded="false" aria-controls="coinDropdown">Commodities <span class="popover-chevron" aria-hidden="true">▾</span></button>
+      <button class="coin-tab coin-cat-btn" data-action="toggleCoinDropdown" data-arg="stocks" aria-expanded="false" aria-controls="coinDropdown">Stocks <span class="popover-chevron" aria-hidden="true">▾</span></button>
+      <button class="coin-tab coin-cat-btn" data-action="toggleCoinDropdown" data-arg="fx" aria-expanded="false" aria-controls="coinDropdown">FX <span class="popover-chevron" aria-hidden="true">▾</span></button>
+      <button class="coin-tab coin-cat-btn" data-action="toggleCoinDropdown" data-arg="watchlist" aria-expanded="false" aria-controls="coinDropdown">★ Watchlist <span class="popover-chevron" aria-hidden="true">▾</span></button>
+      <button class="coin-tab coin-cat-btn" data-action="toggleCoinDropdown" data-arg="hidelist" aria-expanded="false" aria-controls="coinDropdown">⊘ Hide list <span class="popover-chevron" aria-hidden="true">▾</span></button>
+      <div id="coinDropdown" class="dropdown-surface coin-dropdown" style="display:none;">
+        <div class="coin-dropdown-empty">Loading markets…</div>
+      </div>
+    </div>
+    <div class="topbar-tools">
+      <button type="button" class="coin-tab topbar-tool" id="moversToggleBtn" data-action="toggleMoversCollapsed" aria-pressed="false" title="Collapse market movers">Movers</button>
+      <button type="button" class="coin-tab topbar-tool" data-action="clearMessagesAndDrawings" title="Clear messages and chart drawings">Clear</button>
+      <button type="button" class="coin-tab topbar-tool" id="hideValuesBtn" data-action="toggleHide" aria-pressed="false" title="Hide account dollar values">Hide $</button>
+    </div>
+    <button type="button" class="coin-tab topbar-tool" id="settingsToggleBtn" data-action="toggleSettings" data-pass-el="true" aria-expanded="false" aria-controls="settingsPanel" title="Settings">Settings <span class="popover-chevron" aria-hidden="true">▾</span></button>
+    <div class="indicators-surface settings-surface" id="settingsPanel" role="dialog" aria-label="Settings" aria-labelledby="settingsToggleBtn" style="display:none;">
+      <div class="settings-menu" role="menu" aria-label="Settings menu">
+        <button type="button" class="settings-menu-item" id="colorPaletteToggleBtn" role="menuitem" data-action="toggleColorPalette" data-pass-el="true" aria-expanded="false" aria-controls="colorPalettePanel">
+          <span>Colors</span> <span class="popover-chevron" aria-hidden="true">▾</span>
+        </button>
+      </div>
+      <div class="color-palette-surface settings-colors" id="colorPalettePanel" role="region" aria-label="Chart color palette" aria-labelledby="colorPaletteToggleBtn" style="display:none;">
+        <div class="color-palette-heading">
+          <span>Color palette</span>
+          <button type="button" class="color-reset-all" id="colorPaletteResetAll">Reset all</button>
+        </div>
+        <div class="color-templates" id="colorTemplates" role="group" aria-label="Color templates">
+          <div class="color-templates-label">Templates</div>
+          <div class="color-template-slots" id="colorTemplateSlots"></div>
+          <div class="color-template-actions">
+            <button type="button" class="color-template-action" id="colorTemplateSave" title="Save current palette to selected slot">Save</button>
+            <button type="button" class="color-template-action" id="colorTemplateLoad" title="Load selected template">Load</button>
+            <button type="button" class="color-template-action" id="colorTemplateClear" title="Clear selected template slot">Clear</button>
+          </div>
+          <div class="color-template-status" id="colorTemplateStatus" aria-live="polite"></div>
+        </div>
+        <div class="color-palette-rows" id="colorPaletteRows"></div>
+        <div class="color-spectrum-editor">
+          <div class="color-editor-label">Base prism</div>
+          <div class="color-base-prism" id="colorBasePrism" role="slider" tabindex="0" aria-label="Base color hue" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="359">
+            <span class="color-base-prism-cursor" id="colorBasePrismCursor" aria-hidden="true"></span>
+          </div>
+          <div class="color-editor-label">Fine tune</div>
+          <div class="color-spectrum-map" id="colorSpectrumMap" role="slider" tabindex="0" aria-label="Saturation and brightness" aria-valuemin="0" aria-valuemax="100">
+            <span class="color-spectrum-cursor" id="colorSpectrumCursor" aria-hidden="true"></span>
+          </div>
+          <div class="color-hex-row">
+            <span class="color-current-preview" id="colorCurrentPreview" aria-hidden="true"></span>
+            <label for="colorHexInput">Hex</label>
+            <input class="color-hex-input" id="colorHexInput" type="text" inputmode="text" maxlength="7" autocomplete="off" spellcheck="false" aria-describedby="colorHexError">
+            <button type="button" class="color-reset-one" id="colorPaletteResetOne">Reset</button>
+          </div>
+          <div class="color-hex-error" id="colorHexError" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+    <div class="status-pill" id="statusPill" data-tone="sync" title="Connection status">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="status-label" id="statusLabel">Sync</span>
+    </div>
+  </div>
+  <!-- Dynamic top movers: gainers then losers, top-50%-OI cohort. -->
+  <div class="coin-tabs" id="coinTabs">
+    <div class="mover-rows">
+      <div class="mover-row" id="gainersRow" aria-label="Top gainers"></div>
+      <div class="mover-row" id="losersRow" aria-label="Top losers"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="main trading-hidden liq-hidden" id="mainLayout" data-mobile-view="chart">
+  <!-- MARKET NEWS -->
+  <div class="panel signal-panel" data-panel="news">
+    <div class="panel-header">
+      <div class="panel-title" id="marketNewsTitle">Market News</div>
+    </div>
+    <div id="signalNewsFeed" class="signal-news-feed">
+      <div class="signal-tape-empty empty-state-rich">
+        <div class="empty-state-title">Market News</div>
+        <div class="empty-state-copy">Waiting for live headlines…</div>
+      </div>
+    </div>
+    <div class="col-resize-handle col-resize-handle--right" id="newsResizeHandle" role="separator" aria-orientation="vertical" aria-label="Resize news panel" title="Drag to resize news"></div>
+  </div>
+
+  <!-- CHART -->
+  <div class="panel chart-panel" data-panel="chart">
+    <div class="panel-header chart-panel-header">
+      <div class="chart-header-main">
+        <div class="panel-title" id="chartTitle">BTC</div>
+        <div class="chart-header-toggles">
+          <button class="ctrl-btn radar-toggle-btn connected" id="marketRadarToggleBtn" data-action="toggleMarketRadar" aria-pressed="true" title="Hide and disconnect live news">News</button>
+          <button class="ctrl-btn trading-toggle-btn disconnected" id="tradingToggleBtn" data-action="toggleTradingPanel" aria-pressed="false" title="Show order entry & positions">Trade</button>
+          <button class="ctrl-btn liq-toggle-btn disconnected" id="liqToggleBtn" data-action="toggleLiqPanel" aria-pressed="false" title="Show liquidations, misprice and signal">Liqs</button>
+        </div>
+      </div>
+      <div class="panel-controls">
+        <button class="ctrl-btn" id="candleOverlayToggleBtn" data-action="toggleCandleOverlay" data-pass-el="true" aria-expanded="false" aria-controls="candleOverlayPanel" title="Candle overlay options"><span id="candleOverlayToggleLabel">Overlay</span> <span class="popover-chevron" aria-hidden="true">▾</span></button>
+        <button class="ctrl-btn active" id="drawingToggleBtn" data-action="toggleDrawingTools" data-pass-el="true" title="Drawing tools" aria-pressed="true" aria-controls="drawingToolsPanel"><span id="drawingToggleLabel">Draw</span></button>
+        <button class="ctrl-btn" id="indicatorsToggleBtn" data-action="toggleIndicators" data-pass-el="true" aria-expanded="false" aria-controls="indicatorsPanel"><span>IND</span> <span class="popover-chevron" aria-hidden="true">▾</span></button>
+        <div class="tf-group" role="group" aria-label="Chart timeframe">
+          <button class="ctrl-btn tf-primary" data-action="setTimeframe" data-arg="1m" data-pass-el="true">1m</button>
+          <button class="ctrl-btn tf-secondary" data-action="setTimeframe" data-arg="5m" data-pass-el="true">5m</button>
+          <button class="ctrl-btn tf-primary" data-action="setTimeframe" data-arg="15m" data-pass-el="true">15m</button>
+          <button class="ctrl-btn tf-secondary" data-action="setTimeframe" data-arg="30m" data-pass-el="true">30m</button>
+          <button class="ctrl-btn tf-primary" data-action="setTimeframe" data-arg="1h" data-pass-el="true">1h</button>
+          <button class="ctrl-btn tf-primary active" data-action="setTimeframe" data-arg="2h" data-pass-el="true">2h</button>
+          <button class="ctrl-btn tf-primary" data-action="setTimeframe" data-arg="4h" data-pass-el="true">4h</button>
+          <button class="ctrl-btn tf-secondary" data-action="setTimeframe" data-arg="8h" data-pass-el="true">8h</button>
+          <button class="ctrl-btn tf-primary" data-action="setTimeframe" data-arg="1d" data-pass-el="true">1d</button>
+          <button class="ctrl-btn tf-secondary" data-action="setTimeframe" data-arg="1w" data-pass-el="true">1w</button>
+          <button class="ctrl-btn tf-secondary" data-action="setTimeframe" data-arg="1M" data-pass-el="true">1M</button>
+        </div>
+      </div>
+      <div class="indicators-surface candle-overlay-surface" id="candleOverlayPanel" role="dialog" aria-label="Candle overlay options" aria-labelledby="candleOverlayToggleBtn" style="display:none;">
+        <div class="indicator-panel-heading">
+          <span class="indicator-panel-title">Candle overlay</span>
+          <button type="button" class="ctrl-btn candle-overlay-dim-all-btn" id="candleOverlayDimAllBtn" data-action="onToggleDimAllOverlays" title="Toggle dimming for all: base candles, Heikin Ashi, and Renko">Dim all</button>
+          <span class="indicator-panel-badge">Canvas</span>
+        </div>
+
+        <section class="indicator-group" aria-labelledby="candleOverlayModeGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="candleOverlayModeGroupLabel">Overlay type</div>
+            <span class="indicator-group-note">Style</span>
+          </div>
+          <div class="candle-overlay-mode-selector" role="radiogroup" aria-labelledby="candleOverlayModeGroupLabel">
+            <button type="button" class="ctrl-btn candle-overlay-mode-btn active" data-action="selectCandleOverlayMode" data-arg="off" role="radio" aria-checked="true">Off</button>
+            <button type="button" class="ctrl-btn candle-overlay-mode-btn" data-action="selectCandleOverlayMode" data-arg="heikin-ashi" role="radio" aria-checked="false">Heikin Ashi</button>
+            <button type="button" class="ctrl-btn candle-overlay-mode-btn" data-action="selectCandleOverlayMode" data-arg="renko" role="radio" aria-checked="false">Renko</button>
+            <button type="button" class="ctrl-btn candle-overlay-mode-btn" data-action="selectCandleOverlayMode" data-arg="both" role="radio" aria-checked="false">Both</button>
+          </div>
+        </section>
+
+        <section class="indicator-group" id="candleOverlayBaseCandlesSection" aria-labelledby="candleBaseCandlesGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="candleBaseCandlesGroupLabel">Base candles</div>
+            <span class="indicator-group-note">Contrast</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="candleBaseDimmedRadio">Dimmed</label>
+            <input type="radio" id="candleBaseDimmedRadio" name="candleBaseAppearance" value="dimmed" data-change-action="onChangeCandleOverlayBaseCandles" data-arg="dimmed" data-pass-el="true" checked>
+          </div>
+          <div class="indicator-row indicator-nested-row" id="candleOverlayContrastRow">
+            <label class="indicator-label" for="candleOverlayContrastSlider">Contrast</label>
+            <div class="candle-overlay-slider-wrap">
+              <input type="range" class="candle-overlay-slider" id="candleOverlayContrastSlider" min="10" max="80" step="5" value="50" data-input-action="onInputCandleOverlayContrast" data-change-action="onChangeCandleOverlayContrast" data-pass-el="true">
+              <span class="candle-overlay-val-badge" id="candleOverlayContrastVal">50%</span>
+            </div>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="candleBaseHiddenRadio">Hidden</label>
+            <input type="radio" id="candleBaseHiddenRadio" name="candleBaseAppearance" value="hidden" data-change-action="onChangeCandleOverlayBaseCandles" data-arg="hidden" data-pass-el="true">
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="candleBaseNormalRadio">Normal</label>
+            <input type="radio" id="candleBaseNormalRadio" name="candleBaseAppearance" value="normal" data-change-action="onChangeCandleOverlayBaseCandles" data-arg="normal" data-pass-el="true">
+          </div>
+        </section>
+
+        <!-- Heikin Ashi settings -->
+        <section class="indicator-group candle-overlay-subgroup" id="heikinAshiSettingsSection" aria-labelledby="haGroupLabel" hidden>
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="haGroupLabel">Heikin Ashi</div>
+            <span class="indicator-group-note">Averaged</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="heikinAshiDimmedCheck">Dimmed</label>
+            <input type="checkbox" id="heikinAshiDimmedCheck" data-change-action="onToggleHeikinAshiDimmed" data-pass-el="true">
+          </div>
+          <div class="indicator-row indicator-nested-row" id="heikinAshiDimmedRow">
+            <label class="indicator-label" for="heikinAshiOpacitySlider">Contrast</label>
+            <div class="candle-overlay-slider-wrap">
+              <input type="range" class="candle-overlay-slider" id="heikinAshiOpacitySlider" min="10" max="80" step="5" value="50" data-input-action="onInputHeikinAshiOpacity" data-change-action="onChangeHeikinAshiOpacity" data-pass-el="true">
+              <span class="candle-overlay-val-badge" id="heikinAshiOpacityVal">50%</span>
+            </div>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="heikinAshiWicksCheck">Show wicks</label>
+            <input type="checkbox" id="heikinAshiWicksCheck" data-change-action="onToggleHeikinAshiWicks" data-pass-el="true" checked>
+          </div>
+        </section>
+
+        <!-- Renko settings -->
+        <section class="indicator-group candle-overlay-subgroup" id="renkoSettingsSection" aria-labelledby="renkoGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="renkoGroupLabel">Renko</div>
+            <span class="indicator-group-note">Bricks</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="renkoDimmedCheck">Dimmed</label>
+            <input type="checkbox" id="renkoDimmedCheck" data-change-action="onToggleRenkoDimmed" data-pass-el="true" checked>
+          </div>
+          <div class="indicator-row indicator-nested-row" id="renkoDimmedRow">
+            <label class="indicator-label" for="renkoOpacitySlider">Contrast</label>
+            <div class="candle-overlay-slider-wrap">
+              <input type="range" class="candle-overlay-slider" id="renkoOpacitySlider" min="10" max="80" step="5" value="50" data-input-action="onInputRenkoOpacity" data-change-action="onChangeRenkoOpacity" data-pass-el="true">
+              <span class="candle-overlay-val-badge" id="renkoOpacityVal">50%</span>
+            </div>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="renkoBrickModeSelect">Brick size</label>
+            <select class="indicator-select" id="renkoBrickModeSelect" data-change-action="onChangeRenkoBrickMode" data-pass-el="true">
+              <option value="atr">Auto (ATR 14)</option>
+              <option value="0.1%">0.1%</option>
+              <option value="0.25%">0.25%</option>
+              <option value="0.5%">0.5%</option>
+              <option value="1.0%">1.0%</option>
+              <option value="fixed">Fixed USD</option>
+            </select>
+          </div>
+          <div class="indicator-row" id="renkoFixedSizeRow" hidden>
+            <label class="indicator-label" for="renkoFixedSizeInput">Fixed USD</label>
+            <input type="number" class="indicator-num-input" id="renkoFixedSizeInput" min="0" step="any" placeholder="e.g. 50" data-input-action="onInputRenkoFixedSize" data-pass-el="true">
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="renkoWicksCheck">Show wicks</label>
+            <input type="checkbox" id="renkoWicksCheck" data-change-action="onToggleRenkoWicks" data-pass-el="true">
+          </div>
+        </section>
+      </div>
+      <div class="indicators-surface" id="indicatorsPanel" role="dialog" aria-label="Chart indicators" aria-labelledby="indicatorsToggleBtn" style="display:none;">
+        <div class="indicator-panel-heading">
+          <span class="indicator-panel-title">Chart indicators</span>
+          <span class="indicator-panel-badge">Overlays</span>
+        </div>
+
+        <section class="indicator-group" aria-labelledby="anchoredVwapGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="anchoredVwapGroupLabel">Anchored VWAP</div>
+            <span class="indicator-group-note">Manual &amp; Sessions</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="manualAnchoredVwapCheck">Anchors</label>
+            <input type="checkbox" id="manualAnchoredVwapCheck" data-change-action="onToggleManualAnchoredVwap" data-pass-el="true" checked>
+          </div>
+          <div class="indicator-row indicator-action-row">
+            <button class="ctrl-btn indicator-add-btn" id="manualAnchoredVwapAddBtn" data-action="addManualAnchoredVwap" type="button"><span class="indicator-add-plus">+</span> Add anchor</button>
+            <span class="indicator-placement-hint" id="manualAnchoredVwapHint" aria-live="polite"></span>
+          </div>
+          <div class="indicator-subheading">Periodic sessions</div>
+          <div class="indicator-row session-vwap-row">
+            <label class="indicator-label session-vwap-label" for="sessionVwapDailyCheck"><span class="session-vwap-swatch session-vwap-swatch-d" aria-hidden="true"></span>Session D <span class="indicator-muted">00:00 UTC</span></label>
+            <input type="checkbox" id="sessionVwapDailyCheck" data-change-action="onToggleSessionVwap" data-arg="daily" data-pass-el="true">
+          </div>
+          <div class="indicator-row session-vwap-row">
+            <label class="indicator-label session-vwap-label" for="sessionVwapWeeklyCheck"><span class="session-vwap-swatch session-vwap-swatch-w" aria-hidden="true"></span>Session W <span class="indicator-muted">Mon UTC</span></label>
+            <input type="checkbox" id="sessionVwapWeeklyCheck" data-change-action="onToggleSessionVwap" data-arg="weekly" data-pass-el="true">
+          </div>
+          <div class="indicator-row session-vwap-row">
+            <label class="indicator-label session-vwap-label" for="sessionVwapMonthlyCheck"><span class="session-vwap-swatch session-vwap-swatch-m" aria-hidden="true"></span>Session M <span class="indicator-muted">1st UTC</span></label>
+            <input type="checkbox" id="sessionVwapMonthlyCheck" data-change-action="onToggleSessionVwap" data-arg="monthly" data-pass-el="true">
+          </div>
+        </section>
+
+        <section class="indicator-group" aria-labelledby="rvwapGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="rvwapGroupLabel">Rolling VWAP</div>
+            <span class="indicator-group-note">Line / bands</span>
+          </div>
+          <div class="indicator-row rvwap-row">
+            <label class="indicator-label rvwap-label" for="rvwap7dCheck"><span class="rvwap-swatch rvwap-swatch-7d" aria-hidden="true"></span>7 Days</label>
+            <div class="rvwap-controls">
+              <input type="checkbox" id="rvwap7dCheck" data-change-action="onToggleRvwap" data-arg="7D" data-pass-el="true">
+              <label class="indicator-inline-control rvwap-band-toggle" for="rvwap7dBandsCheck"><span>Bands</span> <input type="checkbox" id="rvwap7dBandsCheck" data-change-action="onToggleRvwapBands" data-arg="7D" data-pass-el="true"></label>
+            </div>
+          </div>
+          <div class="indicator-row rvwap-row">
+            <label class="indicator-label rvwap-label" for="rvwap30dCheck"><span class="rvwap-swatch rvwap-swatch-30d" aria-hidden="true"></span>30 Days</label>
+            <div class="rvwap-controls">
+              <input type="checkbox" id="rvwap30dCheck" data-change-action="onToggleRvwap" data-arg="30D" data-pass-el="true" checked>
+              <label class="indicator-inline-control rvwap-band-toggle" for="rvwap30dBandsCheck"><span>Bands</span> <input type="checkbox" id="rvwap30dBandsCheck" data-change-action="onToggleRvwapBands" data-arg="30D" data-pass-el="true" checked></label>
+            </div>
+          </div>
+          <div class="indicator-row rvwap-row">
+            <label class="indicator-label rvwap-label" for="rvwap90dCheck"><span class="rvwap-swatch rvwap-swatch-90d" aria-hidden="true"></span>90 Days</label>
+            <div class="rvwap-controls">
+              <input type="checkbox" id="rvwap90dCheck" data-change-action="onToggleRvwap" data-arg="90D" data-pass-el="true">
+              <label class="indicator-inline-control rvwap-band-toggle" for="rvwap90dBandsCheck"><span>Bands</span> <input type="checkbox" id="rvwap90dBandsCheck" data-change-action="onToggleRvwapBands" data-arg="90D" data-pass-el="true"></label>
+            </div>
+          </div>
+          <div class="indicator-row rvwap-row">
+            <label class="indicator-label rvwap-label" for="rvwap365dCheck"><span class="rvwap-swatch rvwap-swatch-365d" aria-hidden="true"></span>365 TWAP</label>
+            <div class="rvwap-controls">
+              <input type="checkbox" id="rvwap365dCheck" data-change-action="onToggleRvwap" data-arg="365D" data-pass-el="true">
+            </div>
+          </div>
+        </section>
+
+        <section class="indicator-group" aria-labelledby="otherOverlaysGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="otherOverlaysGroupLabel">Other overlays</div>
+            <span class="indicator-group-note">Profile &amp; flow</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="monthlyVolumeProfileCheck">Volume profile</label>
+            <div class="volume-profile-controls">
+              <select id="volumeProfilePeriodSelect" data-change-action="onChangeVolumeProfilePeriod" data-pass-el="true" aria-label="Volume profile period">
+                <option value="visible" selected>Visible range</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+              <input type="checkbox" id="monthlyVolumeProfileCheck" data-change-action="onToggleMonthlyVolumeProfile" data-pass-el="true">
+            </div>
+          </div>
+          <div class="indicator-row indicator-nested-row" id="volumeProfileLvnRow">
+            <label class="indicator-label" for="volumeProfileLvnCheck">Low volume nodes (LVN)</label>
+            <input type="checkbox" id="volumeProfileLvnCheck" data-change-action="onToggleVolumeProfileLvn" data-pass-el="true" checked>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="liquidationClustersCheck"><span class="liq-swatch liq-swatch-long" aria-hidden="true" title="Long liquidation"></span><span class="liq-swatch liq-swatch-short" aria-hidden="true" title="Short liquidation"></span>Liquidation clusters</label>
+            <input type="checkbox" id="liquidationClustersCheck" data-change-action="onToggleLiquidationClusters" data-pass-el="true">
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="jevSignalsCheck">Jev target rays</label>
+            <input type="checkbox" id="jevSignalsCheck" data-change-action="onToggleJevSignals" data-pass-el="true">
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="whaleMarkersCheck">Whale markers</label>
+            <div class="whale-marker-controls">
+              <select id="whaleMarkerMinSelect" data-change-action="onChangeWhaleMarkerMin" data-pass-el="true" aria-label="Whale marker threshold">
+                <option value="100000" selected>≥$100k</option>
+                <option value="250000">≥$250k</option>
+                <option value="500000">≥$500k</option>
+                <option value="1000000">≥$1M</option>
+              </select>
+              <input type="checkbox" id="whaleMarkersCheck" data-change-action="onToggleWhaleMarkers" data-pass-el="true">
+            </div>
+          </div>
+        </section>
+
+        <section class="indicator-group" aria-labelledby="priceProjectionGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="priceProjectionGroupLabel">Price projection</div>
+            <span class="indicator-group-note">UTC month occupancy</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="priceProjectionCheck">Current month map</label>
+            <input type="checkbox" id="priceProjectionCheck" data-change-action="onTogglePriceProjection" data-pass-el="true">
+          </div>
+          <div class="price-projection-status" id="priceProjectionStatus" data-status="disabled" aria-live="polite">Off</div>
+        </section>
+
+        <section class="indicator-group" aria-labelledby="weekPathProjectionGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="weekPathProjectionGroupLabel">2-week path projection</div>
+            <span class="indicator-group-note">Research · Mon+14d UTC</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="weekPathProjectionCheck">Path + 50% / 80%</label>
+            <input type="checkbox" id="weekPathProjectionCheck" data-change-action="onToggleWeekPathProjection" data-pass-el="true">
+          </div>
+          <div class="indicator-row indicator-nested-row">
+            <label class="indicator-label" for="weekPathEnvelopeCheck">Week high / low envelope</label>
+            <input type="checkbox" id="weekPathEnvelopeCheck" data-change-action="onToggleWeekPathEnvelope" data-pass-el="true" checked>
+          </div>
+          <div class="price-projection-status" id="weekPathProjectionStatus" data-status="disabled" aria-live="polite">Off</div>
+        </section>
+
+        <section class="indicator-group" aria-labelledby="lowerPanesGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="lowerPanesGroupLabel">Lower panes</div>
+            <span class="indicator-group-note">Sub-chart</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="cvdOscillatorLookbackSelect">CVD oscillator</label>
+            <div class="indicator-inline-control"><span class="indicator-inline-tag">Lookback</span>
+              <select id="cvdOscillatorLookbackSelect" data-change-action="onChangeCvdOscillatorLookback" data-pass-el="true" aria-label="CVD lookback period">
+                <option value="3D">3 Days</option>
+                <option value="10D">10 Days</option>
+                <option value="20D">20 Days</option>
+                <option value="30D">30 Days</option>
+                <option value="90D" selected>90 Days</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="indicator-group" aria-labelledby="alertsGroupLabel">
+          <div class="indicator-group-heading">
+            <div class="indicator-group-title" id="alertsGroupLabel">Alerts</div>
+            <span class="indicator-group-note">Signals</span>
+          </div>
+          <div class="indicator-row">
+            <label class="indicator-label" for="cvdAlertsCheck">CVD extremes <span class="indicator-muted">Movers + watchlist</span></label>
+            <input type="checkbox" id="cvdAlertsCheck" data-change-action="onToggleCvdAlerts" data-pass-el="true" checked>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="funding-bar chart-draw-bar tools-open" id="chartDrawBar">
+      <div class="drawing-toolbar" id="drawingToolsPanel" role="toolbar" aria-label="Drawing tools">
+        <button type="button" class="ctrl-btn drawing-btn drawing-btn-off active" data-action="clearDrawingTool" data-label="Off" title="Turn off drawing (Esc)" aria-label="Turn off drawing" aria-pressed="true">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3 2.5 3 13l3.2-2.8 1.8 3.8 1.5-.7-1.8-3.8H12z"/></svg>
+          <span class="drawing-btn-label">Off</span>
+        </button>
+        <span class="drawing-toolbar-sep" aria-hidden="true"></span>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="trendline" data-label="Trend line" title="Trend line">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 13.5 13.5 2.5"/></svg>
+          <span class="drawing-btn-label">Trend line</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="curve" data-label="Curve" title="Curve">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 12.5c3.5 0 4.5-9 11-9"/></svg>
+          <span class="drawing-btn-label">Curve</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="arrow" data-label="Arrow" title="Arrow">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 12.5 11.5 3.5"/><path d="M7.5 3.5h4v4"/></svg>
+          <span class="drawing-btn-label">Arrow</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="horizontal" data-label="Horizontal line" title="Horizontal line">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M1.5 8h13"/></svg>
+          <span class="drawing-btn-label">Horizontal line</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="hray" data-label="Horizontal ray" title="Horizontal ray">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 8h10.5"/><path d="M10.2 5.5 13.5 8l-3.3 2.5"/></svg>
+          <span class="drawing-btn-label">Horizontal ray</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="vertical" data-label="Vertical line" title="Vertical line">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 1.5v13"/></svg>
+          <span class="drawing-btn-label">Vertical line</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="channel" data-label="Channel" title="Channel">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 10.5 11 2.5"/><path d="M5 13.5 14 5.5"/></svg>
+          <span class="drawing-btn-label">Channel</span>
+        </button>
+        <span class="drawing-toolbar-sep" aria-hidden="true"></span>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="box" data-label="Box" title="Box">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="2.5" y="3.5" width="11" height="9" rx="0.5"/></svg>
+          <span class="drawing-btn-label">Box</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="circle" data-label="Circle" title="Circle">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5.25"/></svg>
+          <span class="drawing-btn-label">Circle</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="pencil" data-label="Pencil" title="Pencil">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M9.6 2.9 13.1 6.4"/><path d="M3 13 3.7 10.2 11.8 2.1a1.2 1.2 0 0 1 1.7 0l.4.4a1.2 1.2 0 0 1 0 1.7L5.8 12.3 3 13z"/></svg>
+          <span class="drawing-btn-label">Pencil</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="zigzag" data-label="Zig zag" title="Zig zag">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 12.5 5.5 4.5 9 11 14 3.5"/></svg>
+          <span class="drawing-btn-label">Zig zag</span>
+        </button>
+        <span class="drawing-toolbar-sep" aria-hidden="true"></span>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="arrowUp" data-label="Arrow up" title="Arrow up">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 2.5 12.5 8H10v5.5H6V8H3.5z"/></svg>
+          <span class="drawing-btn-label">Arrow up</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="arrowDown" data-label="Arrow down" title="Arrow down">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 13.5 3.5 8H6V2.5h4V8h2.5z"/></svg>
+          <span class="drawing-btn-label">Arrow down</span>
+        </button>
+        <span class="drawing-toolbar-sep" aria-hidden="true"></span>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="fib" data-label="Fib retracement" title="Fib retracement">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 3.5h11"/><path d="M2.5 6.5h11"/><path d="M2.5 9h11"/><path d="M2.5 12.5h11"/><path d="M3.5 3.5v9"/></svg>
+          <span class="drawing-btn-label">Fib retracement</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="measure" data-label="Measure" title="Measure">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 12.5 13.5 3.5"/><path d="M2.5 12.5h3"/><path d="M2.5 12.5v-3"/><path d="M13.5 3.5h-3"/><path d="M13.5 3.5v3"/></svg>
+          <span class="drawing-btn-label">Measure</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="text" data-label="Text" title="Text">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 3h11"/><path d="M2.5 3v2.25"/><path d="M13.5 3v2.25"/><path d="M8 5.25V13"/><path d="M5.75 13h4.5"/></svg>
+          <span class="drawing-btn-label">Text</span>
+        </button>
+        <span class="drawing-toolbar-sep" aria-hidden="true"></span>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="longPosition" data-label="Long position" title="Long position">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="3" y="2.5" width="10" height="11" rx="0.5"/><path d="M8 11.5V5.5"/><path d="M5.5 7.5 8 5l2.5 2.5"/></svg>
+          <span class="drawing-btn-label">Long position</span>
+        </button>
+        <button type="button" class="ctrl-btn drawing-btn" data-action="selectDrawingTool" data-arg="shortPosition" data-label="Short position" title="Short position">
+          <svg class="drawing-btn-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><rect x="3" y="2.5" width="10" height="11" rx="0.5"/><path d="M8 4.5v6"/><path d="M5.5 8.5 8 11l2.5-2.5"/></svg>
+          <span class="drawing-btn-label">Short position</span>
+        </button>
+      </div>
+      <div class="funding-meta">
+        <span class="funding-label">Funding</span>
+        <span class="funding-val" id="fundingVal">—</span>
+        <span class="funding-oi">OI <span id="oiVal">—</span></span>
+      </div>
+    </div>
+    <div class="chart-wrap" id="chartWrap">
+      <div id="uplot-chart"></div>
+      <div id="crosshairInfo"></div>
+    </div>
+    <div class="chart-touch-toolbar" id="chartTouchToolbar" aria-label="Chart actions">
+      <div class="chart-touch-row">
+        <button type="button" class="chart-touch-btn" id="chartTouchLiveBtn" data-action="jumpChartToLive">Live</button>
+        <button type="button" class="chart-touch-btn" id="chartTouchFitBtn" data-action="fitChartView">Fit</button>
+        <button type="button" class="chart-touch-btn buy" id="chartTouchBuyBtn" data-action="armChartPricePick" data-arg="buy" aria-pressed="false">Buy Tap</button>
+        <button type="button" class="chart-touch-btn sell" id="chartTouchSellBtn" data-action="armChartPricePick" data-arg="sell" aria-pressed="false">Sell Tap</button>
+      </div>
+      <div class="chart-touch-status" id="chartTouchHint">Double tap chart to load limit price.</div>
+    </div>
+  </div>
+
+  <!-- BOTTOM PANEL -->
+  <div class="panel bottom-panel">
+    <div class="bottom-resize-handle" id="bottomResizeHandle" title="Drag to resize positions panel" role="separator" aria-orientation="horizontal" aria-label="Resize positions panel"></div>
+    <div class="bottom-tabs">
+      <button class="bottom-tab active" data-tab="positions" data-action="switchTab" data-arg="positions" data-pass-el="true">Positions <span id="positionsCount" class="tab-count">(0)</span></button>
+      <button class="bottom-tab" data-tab="orders" data-action="switchTab" data-arg="orders" data-pass-el="true">Orders <span id="ordersCount" class="tab-count">(0)</span></button>
+      <button class="bottom-tab" data-tab="trades" data-action="switchTab" data-arg="trades" data-pass-el="true">Trades</button>
+      <button class="bottom-tab" data-tab="fills" data-action="switchTab" data-arg="fills" data-pass-el="true">Fills</button>
+    </div>
+    <div class="bottom-content" id="bottomContent"></div>
+  </div>
+
+  <!-- DOM (unified: ALL/WHALE taker flow lives in the header; whale prints mark
+       their ladder rows with a sticky dot) -->
+  <div class="panel book-panel" data-panel="book">
+    <div class="book-content book-stack">
+      <div class="book-stack-section">
+        <div class="flow-col-title flow-market-header flow-metrics" title="Rolling taker flow for the latest 500 public prints. WHALE is the $100k+ subset. Aqua = taker buys, red = taker sells.">
+          <span class="flow-label">ALL</span>
+          <span id="domFlowBuy" class="flow-val right"></span>
+          <span id="domFlowBar" class="dom-flow-meter" role="img" aria-label="All taker buy and sell flow"></span>
+          <span id="domFlowSell" class="flow-val"></span>
+          <span class="flow-label">WHALE</span>
+          <span id="domWhaleFlowBuy" class="flow-val right strong"></span>
+          <span id="domWhaleFlowBar" class="dom-flow-meter" role="img" aria-label="Whale taker buy and sell flow"></span>
+          <span id="domWhaleFlowSell" class="flow-val strong"></span>
+        </div>
+        <div id="domLadderList" class="scroll-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIQUIDATIONS + STOCK MISPRICING (stacked) -->
+  <div class="panel liq-panel" data-panel="liq">
+    <div class="book-content book-stack">
+      <div class="book-stack-section">
+        <div class="flow-col-title flow-market-header flow-center">
+          <span>LIQS</span>
+        </div>
+        <div id="liquidationsList" class="scroll-fill"></div>
+      </div>
+      <div class="book-stack-section">
+        <div class="flow-col-title flow-center" title="Deviation of current HL price from each stock's last home-exchange close, ranked by size">
+          <span>MISPRICE</span>
+        </div>
+        <div id="mispricingList" class="scroll-fill"></div>
+      </div>
+      <div class="book-stack-section" id="jevSignalSection">
+        <div class="flow-col-title flow-center flow-market-header jev-window-header" title="TypeSafe Jev System One real-time orderflow intelligence & trade signals">
+          <span class="jev-window-header-title">⚡ JEV SIGNAL</span>
+          <button type="button" class="jev-signal-refresh-btn" id="jevSignalRefreshBtn" title="Scan market for new signal">↻</button>
+        </div>
+        <div class="jev-tf-selector-bar" id="jevTfSelectorBar" role="tablist" aria-label="Trade Duration Horizon">
+          <button type="button" class="jev-tf-btn" data-tf="scalp" title="Quick Scalp (15m – 45m holding horizon)">SCALP 15m</button>
+          <button type="button" class="jev-tf-btn active" data-tf="intraday" title="Session Intraday (2h – 8h holding horizon)">INTRADAY 4h</button>
+          <button type="button" class="jev-tf-btn" data-tf="swing" title="Intra-Month Swing (1d – 5d holding horizon)">SWING 1d+</button>
+        </div>
+        <div id="jevSignalWindow" class="jev-signal-window scroll-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER ENTRY -->
+  <div class="panel order-panel" data-panel="order">
+    <div class="col-resize-handle col-resize-handle--left" id="orderResizeHandle" role="separator" aria-orientation="vertical" aria-label="Resize order panel" title="Drag to resize ticket"></div>
+    <div class="panel-header order-stats-header">
+      <div class="order-stats-row">
+        <span id="equityDisplay">Portfolio Value: —</span>
+        <span id="spotDisplay">Avail.: —</span>
+      </div>
+    </div>
+    <div id="walletBar" class="wallet-bar">
+      <div id="walletDisconnected" class="wallet-row">
+        <div class="wallet-dot"></div>
+        <span class="wallet-status-text">Not connected</span>
+        <button data-action="showConnectModal" class="wallet-btn wallet-btn--primary">Connect</button>
+      </div>
+      <div id="walletConnected" class="wallet-connected-col" style="display:none;">
+        <div class="wallet-row-connected">
+          <div class="wallet-dot live"></div>
+          <button data-action="handleWalletBtnClick" id="walletAddrBtn" title="Click to disconnect" class="wallet-btn wallet-addr-btn">—</button>
+          <button data-action="closeAllPositions" data-pass-el="true" title="Close all positions" class="wallet-btn">CLOSE</button>
+          <button data-action="cancelAllOrders" data-pass-el="true" class="wallet-btn">CANCEL</button>
+          <button data-action="scheduleCancelUI" title="Timed cancel" class="wallet-btn">TIMER</button>
+          <button class="place-btn buy compact-submit-btn" id="compactBuyBtn" data-action="placeOrderWithSide" data-arg="buy" data-pass-el="true" style="display:none;">Buy</button>
+          <button class="place-btn sell compact-submit-btn" id="compactSellBtn" data-action="placeOrderWithSide" data-arg="sell" data-pass-el="true" style="display:none;">Sell</button>
+        </div>
+        <div id="leverageSliderContainer" class="wallet-lev-row" style="display:none;">
+          <input type="range" id="leverageSlider" min="1" max="40" value="40" class="wallet-lev-slider" data-input-action="updateLeverageFromSlider" data-pass-el="true">
+          <span id="leverageSliderValue" class="wallet-lev-val">40x</span>
+          <span id="leverageExchangeValue" class="wallet-lev-val muted">—</span>
+        </div>
+      </div>
+    </div>
+    <div id="connectModal" class="modal-backdrop" style="display:none;">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div class="modal-title">Connect Wallet</div>
+          <button data-action="hideConnectModal" class="modal-close">&times;</button>
+        </div>
+        <form data-submit-action="modalConnect" class="modal-form">
+          <input type="text" autocomplete="username" tabindex="-1" aria-hidden="true" class="hp-input" value="pez-user">
+          <div class="modal-note">
+            <strong>Hex Key Login</strong><br>
+            Paste a 64-character Hyperliquid private key.<br>
+            The key is used locally for signing and stays in the current session.
+          </div>
+          <div class="modal-field">
+            <div class="modal-field-label">Hex Private Key</div>
+            <input id="pkInput" type="password" autocomplete="new-password" placeholder="Paste 64-character hex private key..." class="modal-input" data-enter-action="modalConnect">
+            <div class="modal-hint">Supported login path: direct hex key entry only.</div>
+          </div>
+          <div class="modal-note">
+            <strong>Market Radar News</strong><br>
+            Uses public Google News RSS market queries.<br>
+            Headlines link out to the full article when available.
+          </div>
+          <div class="modal-actions">
+            <button type="button" data-action="hideConnectModal" class="modal-cancel">Cancel</button>
+            <button id="modalConnectBtn" type="submit" class="modal-submit">Save / Connect</button>
+          </div>
+          <div id="modalError" class="modal-error" style="display:none;"></div>
+        </form>
+      </div>
+    </div>
+    <div class="order-content">
+      <div class="order-type-group">
+        <div class="field-label order-type-label ticket-section-label">Order Type</div>
+        <div class="order-type-tabs">
+          <button class="type-tab active" data-action="setOrderType" data-arg="limit" data-pass-el="true">Limit</button>
+          <button class="type-tab" data-action="setOrderType" data-arg="market" data-pass-el="true">Market</button>
+          <button class="type-tab" data-action="setOrderType" data-arg="scale" data-pass-el="true">Scale</button>
+          <button class="type-tab" data-action="setOrderType" data-arg="twap" data-pass-el="true">TWAP</button>
+          <button class="type-tab" id="botTab" data-action="setOrderType" data-arg="bot" data-pass-el="true">BOT</button>
+        </div>
+      </div>
+      <!-- SCALE FIELDS (Scale only) -->
+      <div class="field-group" id="scaleGroup" style="display:none;">
+        <div class="ticket-divider"></div>
+        <div class="field-group">
+          <div class="field-label ticket-section-label">Order Structure</div>
+          <div class="ticket-grid-2">
+            <div class="field-group">
+              <div class="field-label">Orders</div>
+              <input class="field-input" type="number" id="scaleOrders" placeholder="5" value="5" min="1" max="40">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Total ($)</div>
+              <input class="field-input" type="number" id="scaleTotal" placeholder="1000" data-input-action="updateScaleSummary">
+              <input class="field-input slider-input" type="range" id="scaleTotalSlider" min="0" max="10000" value="0" step="10" data-input-action="setScaleTotal" data-pass-value="true">
+            </div>
+          </div>
+        </div>
+        <div class="field-group ticket-subsection">
+          <div class="field-label ticket-section-label">Price Range</div>
+          <div class="ticket-grid-2">
+            <div class="field-group">
+              <div class="field-label">Price Low</div>
+              <input class="field-input" type="number" id="scaleLow" placeholder="69000">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Price High</div>
+              <input class="field-input" type="number" id="scaleHigh" placeholder="71000">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TWAP FIELDS (TWAP only) -->
+      <div class="field-group" id="twapGroup" style="display:none;">
+        <div class="ticket-divider"></div>
+        <div class="ticket-grid-2">
+          <div class="field-group">
+            <div class="field-label">Duration (min)</div>
+            <input class="field-input" type="number" id="twapMinutes" value="30" min="5" max="1440">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Randomize</div>
+            <select class="field-input" id="twapRandomize">
+              <option value="false">Fixed</option>
+              <option value="true">Random</option>
+            </select>
+          </div>
+        </div>
+        <div class="ticket-note">
+          TWAP: Fixed 30s intervals. Min $10/order × 2/min. Min size = duration(min) × $20
+        </div>
+        <div id="twapStatusPanel" class="ticket-note" style="display:none;">
+          <div class="twap-status-head">
+            <div class="field-label field-label-flush">Active TWAP</div>
+            <button id="cancelTwapBtn" data-action="cancelActiveTwap" class="twap-cancel-btn" style="display:none;">Cancel TWAP</button>
+          </div>
+          <div id="twapStatusText" class="twap-status-text">No active TWAP for this coin</div>
+        </div>
+      </div>
+
+      <!-- SIMPLE BOT -->
+      <div id="botGroup" style="display:none;">
+        <!-- Strategy Selector -->
+        <div class="field-group bot-strategy-field">
+          <div class="field-label">Strategy</div>
+          <select class="field-input range-block" id="botStrategy" data-change-action="loadBotStrategy" data-pass-value="true">
+            <option value="rvwap-short-bollinger">RVWAP (3d)</option>
+            <option value="rvwap-bollinger">RVWAP (1d)</option>
+            <option value="jev-orderflow">Jev Orderflow (System One)</option>
+          </select>
+        </div>
+
+        <div class="field-group jev-audit-group">
+          <div class="jev-header-row">
+            <span id="jevStatusBadge" class="skew-chip jev-badge-pill hidden">JEV AI</span>
+            <button type="button" id="jevAnalyzeBtn" class="ctrl-btn jev-analyze-btn">JEV AUDIT</button>
+          </div>
+          <div id="jevResultPanel" class="jev-result-panel"></div>
+        </div>
+
+        <!-- Mode Toggle (JS recolors the active pill inline — keep the color styles) -->
+        <div class="bot-mode-row">
+          <label class="bot-mode-label">
+            <input type="radio" name="botMode" value="sequential" checked data-change-action="setBotMode" data-arg="sequential">
+            <div id="modeSeq" class="bot-mode-pill" style="background:var(--green);color:#000;">SEQUENTIAL</div>
+          </label>
+          <label class="bot-mode-label">
+            <input type="radio" name="botMode" value="bulk" data-change-action="setBotMode" data-arg="bulk">
+            <div id="modeBulk" class="bot-mode-pill" style="background:var(--bg2);color:var(--text2);">BULK</div>
+          </label>
+        </div>
+        
+        <!-- Sequential Mode Section -->
+        <div id="seqSection">
+          <div class="ticket-grid-3">
+            <div class="field-group">
+              <div class="field-label">Orders/Side</div>
+              <input class="field-input range-block" type="number" id="botNumOrders" value="16" min="2" max="20" data-input-action="syncBotTotals">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Size $/order</div>
+              <input class="field-input range-block" type="number" id="botOrderSize" value="15" min="15" max="100" data-input-action="syncBotTotals">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Total $</div>
+              <div id="seqTotal" class="total-chip">$480</div>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="bot-kv-head">
+              <div class="field-label field-label-flush">Bid Skew</div>
+              <div id="bidSkewValue" class="skew-chip">1.0</div>
+            </div>
+            <input class="field-input range-block" type="range" id="bidSkew" value="1.0" min="0" max="4" step="0.1" data-input-action="onBidSkewChange" data-pass-value="true">
+          </div>
+          <div class="field-group">
+            <div class="bot-kv-head">
+              <div class="field-label field-label-flush">Ask Skew</div>
+              <div id="askSkewValue" class="skew-chip">1.0</div>
+            </div>
+            <input class="field-input range-block" type="range" id="askSkew" value="1.0" min="0" max="4" step="0.1" data-input-action="onAskSkewChange" data-pass-value="true">
+          </div>
+        </div>
+        
+        <!-- Bulk Mode Section (hidden by default) -->
+        <div id="bulkSection" style="display:none;">
+          <div class="ticket-grid-3">
+            <div class="field-group">
+              <div class="field-label">Orders</div>
+              <input class="field-input range-block" type="number" id="bulkOrders" value="16" min="2" max="20" data-input-action="syncBotTotals">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Size $/ea</div>
+              <input class="field-input range-block" type="number" id="bulkSize" value="15" min="15" data-input-action="syncBotTotals">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Total $</div>
+              <div id="bulkTotalDisplay" class="total-chip">$2000</div>
+            </div>
+          </div>
+          <div class="ticket-grid-2 bot-skew-grid">
+            <div class="field-group">
+              <div class="field-label">Bid Skew</div>
+              <div id="bulkBidSkewValue" class="skew-chip center">4.0</div>
+              <input class="field-input range-block bot-skew-range" type="range" id="bulkBidSkew" value="4.0" min="1" max="4" step="0.1" data-input-action="onBulkBidSkewChange" data-pass-value="true">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Ask Skew</div>
+              <div id="bulkAskSkewValue" class="skew-chip center">4.0</div>
+              <input class="field-input range-block bot-skew-range" type="range" id="bulkAskSkew" value="4.0" min="1" max="4" step="0.1" data-input-action="onBulkAskSkewChange" data-pass-value="true">
+            </div>
+          </div>
+        </div>
+
+        <div class="bot-panel-card">
+          <div class="bot-panel-head">
+            <span class="bot-panel-title">BOT</span>
+            <button type="button" id="botToggleBtn" data-action="botToggle" class="bot-toggle-btn">
+              START
+            </button>
+          </div>
+          <div class="bot-status-lines">
+            <span>Orders: <b id="botOrdersDisplay">0B / 0A</b></span>
+          </div>
+          <div class="bot-status-lines bot-status-flex">
+            <span>Runtime: <b id="botRuntimeStatus">idle</b></span>
+            <span>UI link: <b id="botLinkStatus">checking</b></span>
+          </div>
+          <div id="botLogConsole" class="term"></div>
+        </div>
+      </div>
+      <!-- Jev 1-Click Ticket Fill Trigger -->
+      <button type="button" class="btn btn-sm jev-ticket-fill-btn hidden" id="jevTicketFillBtn" disabled title="Fill ticket with live Jev signal">
+        ⚡ FILL JEV TICKET
+      </button>
+      <div class="seg-control" id="sideControl">
+        <button class="seg-btn buy-active" id="buyBtn" data-action="setSide" data-arg="buy">Buy / Long</button>
+        <button class="seg-btn" id="sellBtn" data-action="setSide" data-arg="sell">Sell / Short</button>
+      </div>
+      <div id="priceSizeGrid" class="ticket-grid-2">
+        <div class="field-group" id="priceGroup">
+          <div class="field-label field-label-with-badge">
+            <span>Price (USDC)</span>
+            <div class="ticket-price-mode-controls">
+              <select id="priceModeSelect" class="ticket-mode-select" data-change-action="setLimitPriceEntryModeSelection" data-pass-value="true">
+                <option value="auto">Auto</option>
+                <option value="manual">Manual</option>
+              </select>
+            </div>
+          </div>
+          <div class="compact-limit-price-strip" id="compactLimitPriceStrip" hidden aria-live="polite">
+            <div class="compact-limit-price-pill buy" id="compactLimitBuyPrice">
+              <span class="compact-limit-price-label">Buy</span>
+              <span class="compact-limit-price-value" id="compactLimitBuyValue">—</span>
+            </div>
+            <div class="compact-limit-price-pill sell" id="compactLimitSellPrice">
+              <span class="compact-limit-price-label">Sell</span>
+              <span class="compact-limit-price-value" id="compactLimitSellValue">—</span>
+            </div>
+          </div>
+          <input class="field-input" type="number" id="priceInput" placeholder="0.00" data-input-action="onManualPriceInput">
+        </div>
+        <div class="field-group" id="sizeGroup">
+          <div class="field-label">Size (USD)</div>
+          <div class="input-with-unit">
+            <input class="field-input" type="number" id="sizeInput" placeholder="0" data-input-action="onManualSizeInput">
+            <span class="input-unit">$</span>
+          </div>
+        </div>
+      </div>
+      <div class="field-group" id="sizeSliderGroup">
+        <input class="field-input slider-input" type="range" id="sizeSlider" min="0" max="10000" value="0" step="10" data-input-action="setSize" data-pass-value="true">
+      </div>
+      <!-- TP/SL (Limit only) -->
+      <div id="tpslGroup">
+        <div class="ticket-divider"></div>
+        <div class="ticket-grid-2">
+          <div class="field-group">
+            <div class="field-label">Take Profit %</div>
+            <input class="field-input" type="number" id="tpPctInput" placeholder="e.g., 2" step="0.1" min="0.1" max="500" data-input-action="onManualTpInput">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Stop Loss %</div>
+            <input class="field-input" type="number" id="slPctInput" placeholder="e.g., 1" step="0.1" min="0.1" max="100" data-input-action="onManualSlInput">
+          </div>
+        </div>
+      </div>
+      <div class="order-summary" id="orderSummary">
+        <div class="summary-row"><span class="summary-label">Order Value</span><span class="summary-val" id="sumValue">—</span></div>
+        <div class="summary-row"><span class="summary-label">Coin Amount</span><span class="summary-val" id="sumAmount">—</span></div>
+        <div class="summary-row"><span class="summary-label">Est. Fee (0.045%)</span><span class="summary-val" id="sumFee">—</span></div>
+        <div class="summary-row" id="previewMarginRow" style="display:none;"><span class="summary-label">Required Margin</span><span class="summary-val" id="previewMargin">—</span></div>
+        <div class="summary-row" id="previewLiqRow" style="display:none;"><span class="summary-label">Liquidation</span><span class="summary-val" id="previewLiq">—</span></div>
+        <div class="summary-row" id="previewDistRow" style="display:none;"><span class="summary-label">Dist to Liq</span><span class="summary-val" id="previewDist">—</span></div>
+      </div>
+      <div class="ticket-action-row">
+        <button id="previewBtn" data-action="previewOrder" class="preview-btn">Preview</button>
+        <button class="place-btn buy" id="placeBtn" data-action="placeOrder">Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="mobile-dock" id="mobileDock" aria-label="Primary views">
+  <button type="button" class="mobile-dock-btn active" data-action="setMobileView" data-arg="chart" aria-pressed="true">
+    <span class="mobile-dock-glyph" aria-hidden="true"><span class="glyph-chart"></span></span>
+    <span class="mobile-dock-label">Chart</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" data-action="setMobileView" data-arg="book" aria-pressed="false">
+    <span class="mobile-dock-glyph" aria-hidden="true"><span class="glyph-book"></span></span>
+    <span class="mobile-dock-label">Book</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" data-action="setMobileView" data-arg="news" aria-pressed="false">
+    <span class="mobile-dock-glyph" aria-hidden="true"><span class="glyph-news"></span></span>
+    <span class="mobile-dock-label">News</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" data-action="setMobileView" data-arg="trade" aria-pressed="false">
+    <span class="mobile-dock-glyph" aria-hidden="true"><span class="glyph-trade"></span></span>
+    <span class="mobile-dock-label">Trade</span>
+  </button>
+  <button type="button" class="mobile-dock-btn" data-action="setMobileView" data-arg="account" aria-pressed="false">
+    <span class="mobile-dock-glyph" aria-hidden="true"><span class="glyph-account"></span></span>
+    <span class="mobile-dock-label">Account</span>
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- CUSTOM CONFIRM MODAL -->
+<div class="confirm-modal" id="confirmModal">
+  <div class="confirm-modal-content">
+    <div class="confirm-modal-message" id="confirmMessage"></div>
+    <div class="confirm-modal-buttons">
+      <button class="confirm-modal-btn cancel" data-action="hideConfirmModal" data-arg="false">Cancel</button>
+      <button class="confirm-modal-btn confirm" data-action="hideConfirmModal" data-arg="true">Confirm</button>
+    </div>
+  </div>
+  </div>
+
+<!-- Drawing text label dialog (label + font size) -->
+<div id="drawingTextModal" class="modal-backdrop drawing-text-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="drawingTextModalTitle">
+  <div class="modal-card drawing-text-card">
+    <div class="modal-head">
+      <div class="modal-title" id="drawingTextModalTitle">Text label</div>
+      <button type="button" class="modal-close" data-drawing-text="cancel" aria-label="Close">&times;</button>
+    </div>
+    <form class="modal-form" id="drawingTextForm">
+      <div class="modal-field">
+        <label class="modal-field-label" for="drawingTextInput">Label</label>
+        <input id="drawingTextInput" class="modal-input" type="text" maxlength="200" autocomplete="off" spellcheck="true" placeholder="Enter text…">
+      </div>
+      <div class="modal-field">
+        <label class="modal-field-label" for="drawingTextFontSize">Font size</label>
+        <select id="drawingTextFontSize" class="modal-input drawing-text-size-select">
+          <option value="10">10px</option>
+          <option value="12">12px</option>
+          <option value="14" selected>14px</option>
+          <option value="16">16px</option>
+          <option value="18">18px</option>
+          <option value="20">20px</option>
+          <option value="24">24px</option>
+          <option value="28">28px</option>
+          <option value="32">32px</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="modal-cancel" data-drawing-text="cancel">Cancel</button>
+        <button type="submit" class="modal-submit" data-drawing-text="ok">Add text</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/config.js"></script>
+<script type="module" src="/dist/main-CGPTRUGN.js"></script>
+<!-- Strategy modules are now ES modules imported from src/main.js (window.* bridge Stage 2). -->
+</body>
+</html>

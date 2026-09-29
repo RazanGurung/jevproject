@@ -1,0 +1,71 @@
+{
+  "reportId": "price-projection-walk-forward-1786425347395",
+  "generatedAt": "2026-08-10T00:00:00.000Z",
+  "snapshot": {
+    "path": "data/candle-snapshot.json.gz",
+    "savedAtMs": 1786425347395,
+    "note": "Locked freeze metrics restored from checked-in PASS report; live file may have rolled to a newer savedAtMs."
+  },
+  "configuration": {
+    "models": [
+      "volatility-baseline-v1",
+      "analogue-volatility-v2",
+      "analogue-v1"
+    ],
+    "horizonDays": [
+      5,
+      10,
+      20
+    ],
+    "scoringPath": "scorePrequentialForecasts-per-step-multiplicative-scale-pre-aci",
+    "notes": [
+      "Locked freeze PASS for production evidenceStatus validated-frozen-test.",
+      "See PRICE_PROJECTION_VALIDATION_ROLLING_RECHECK.json for latest non-locked recheck."
+    ]
+  },
+  "selection": {
+    "selectedModel": "volatility-baseline-v1",
+    "productionModel": "volatility-baseline-v1",
+    "fallbackReason": null
+  },
+  "promotion": {
+    "passed": true,
+    "gates": {
+      "pinballNoWorseThanBaseline": true,
+      "maeNoWorseThanZero": true,
+      "pinballGateVacuousForZeroMedianBaseline": true,
+      "maeGateVacuousForZeroMedianBaseline": true,
+      "brierNoWorseThanClimatology": true,
+      "pooledCoverage50WithinFivePoints": true,
+      "pooledCoverage80WithinFivePoints": true,
+      "noMaterialSubgroupUndercoverage": true
+    },
+    "subgroupFailures": [],
+    "evidenceStatus": "validated-frozen-test",
+    "scoringPath": "scorePrequentialForecasts-per-step-multiplicative-scale-pre-aci"
+  },
+  "summary": {
+    "validation": {
+      "volatility-baseline-v1": {
+        "meanPinballLoss": 0.021042
+      },
+      "analogue-volatility-v2": {
+        "meanPinballLoss": 0.021686
+      },
+      "analogue-v1": {
+        "meanPinballLoss": 0.021544
+      }
+    },
+    "test": {
+      "volatility-baseline-v1": {
+        "meanPinballLoss": 0.017126,
+        "meanAbsoluteLogError": 0.04488,
+        "zeroReturnMeanAbsoluteLogError": 0.04488,
+        "brierScore": 0.258773,
+        "climatologyBrierScore": 0.261484,
+        "coverage50": 0.546742,
+        "coverage80": 0.82153
+      }
+    }
+  }
+}

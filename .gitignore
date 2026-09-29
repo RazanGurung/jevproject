@@ -1,0 +1,46 @@
+# macOS metadata
+.DS_Store
+
+# Frontend/test caches and reports
+web/node_modules/.vite/
+.vite/
+coverage/
+web/coverage/
+.nyc_output/
+test-results/
+playwright-report/
+performance-results/
+scripts/cvd_validation/reports/
+
+# Local build and test caches
+.cache/
+data/
+*.test
+*.coverprofile
+coverage.out
+
+# Signing material and protection persist files if they land outside data/
+hyperliquid_key.txt
+hyperliquid_account.txt
+typesafe_key.txt
+*typesafe*.txt
+*typesafe*.json
+*.key
+*.secret
+pending_protection.json
+*.tmp-*
+
+# Temporary files, profiles, process state, and project logs
+*.tmp
+*.temp
+*.swp
+*~
+*.prof
+*.pprof
+*.pid
+*.log
+
+# node_modules is intentionally retained; do not hide files shipped by packages.
+!web/node_modules/**/*.tmp
+!web/node_modules/**/*.temp
+!web/node_modules/**/*.log

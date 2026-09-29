@@ -1,0 +1,240 @@
+{
+  "reportId": "week-path-projection-walk-forward-1786546708882",
+  "generatedAt": "2026-08-12T15:14:01.112Z",
+  "snapshot": {
+    "path": "data/candle-snapshot.json.gz",
+    "savedAtMs": 1786546708882,
+    "sourceSeries": 9,
+    "evaluatedSeries": 9
+  },
+  "configuration": {
+    "models": [
+      "week-vol-baseline-v1",
+      "week-wtd-analogue-v1"
+    ],
+    "timeframes": [
+      "1h",
+      "2h",
+      "4h"
+    ],
+    "horizonGeometry": "iso-week-start + 14 calendar days (remaining bars)",
+    "chronologicalSplit": {
+      "development": [
+        0,
+        0.6
+      ],
+      "validation": [
+        0.6,
+        0.8
+      ],
+      "test": [
+        0.8,
+        1
+      ]
+    },
+    "originSeparation": "non-overlapping by each origin remaining horizon",
+    "maxOriginsPerPhase": 24,
+    "trials": 2,
+    "tieRule": "within 1% of minimum validation pinball chooses simpler model",
+    "frozenTestModels": [
+      "week-vol-baseline-v1"
+    ],
+    "scoringPath": "scorePrequentialForecasts-per-step-multiplicative-scale-pre-aci",
+    "notes": [
+      "Residual scoring uses scorePrequentialForecasts (per-step multiplicative λ), identical to live buildWeekCalibration diagnostics.",
+      "ACI-lite applyPathCalibration adjusts chart factors only; promotion coverage matches UI BT50/BT80 (pre-ACI).",
+      "For week-vol-baseline-v1, pinball-vs-baseline and MAE-vs-zero are identity (vacuous) because the median is pinned at zero remaining log-return.",
+      "Vol model is har-multiperiod-rv shared with price projection; day-class pooling for vol baseline only."
+    ]
+  },
+  "selection": {
+    "selectedModel": "week-vol-baseline-v1",
+    "productionModel": "week-vol-baseline-v1",
+    "fallbackReason": "frozen-test-promotion-failed",
+    "minimumValidationLoss": 0.03220699792055258,
+    "eligibleWithinOnePercent": [
+      "week-vol-baseline-v1"
+    ]
+  },
+  "promotion": {
+    "passed": false,
+    "gates": {
+      "pinballNoWorseThanBaseline": true,
+      "maeNoWorseThanZero": true,
+      "pinballGateVacuousForZeroMedianBaseline": true,
+      "maeGateVacuousForZeroMedianBaseline": true,
+      "brierNoWorseThanClimatology": false,
+      "pooledCoverage50WithinFivePoints": false,
+      "pooledCoverage80WithinFivePoints": true,
+      "noMaterialSubgroupUndercoverage": true,
+      "minTestSamples": true
+    },
+    "subgroupFailures": [],
+    "evidenceStatus": "unvalidated",
+    "scoringPath": "scorePrequentialForecasts-per-step-multiplicative-scale-pre-aci"
+  },
+  "summary": {
+    "validation": {
+      "week-vol-baseline-v1": {
+        "samples": 45,
+        "meanPinballLoss": 0.03220699792055258,
+        "meanAbsoluteLogError": 0.08037036945698851,
+        "zeroReturnMeanAbsoluteLogError": 0.08037036945698851,
+        "brierScore": 0.2561246612773835,
+        "climatologyBrierScore": 0.25448271803809536,
+        "coverage50": 0.48148148148148145,
+        "coverage80": 0.8148148148148148,
+        "meanInterval50Width": 0.1868580908850157,
+        "meanInterval80Width": 0.38655592052509613,
+        "meanInterval50Score": 0.3562500928441633,
+        "meanInterval80Score": 0.551639431359738
+      },
+      "week-wtd-analogue-v1": {
+        "samples": 0,
+        "meanPinballLoss": null,
+        "meanAbsoluteLogError": null,
+        "zeroReturnMeanAbsoluteLogError": null,
+        "brierScore": null,
+        "climatologyBrierScore": null,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    "test": {
+      "week-vol-baseline-v1": {
+        "samples": 28,
+        "meanPinballLoss": 0.024397633035608057,
+        "meanAbsoluteLogError": 0.06050222304843498,
+        "zeroReturnMeanAbsoluteLogError": 0.06050222304843498,
+        "brierScore": 0.2895064443798695,
+        "climatologyBrierScore": 0.2840106667116124,
+        "coverage50": 0.5714285714285714,
+        "coverage80": 0.8095238095238095,
+        "meanInterval50Width": 0.14480486325974493,
+        "meanInterval80Width": 0.29298281438149876,
+        "meanInterval50Score": 0.2777598310080672,
+        "meanInterval80Score": 0.43354250634959673
+      }
+    }
+  },
+  "subgroups": [
+    {
+      "group": "4h:remaining",
+      "modelId": "week-vol-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 27,
+        "meanPinballLoss": 0.03676976818090055,
+        "meanAbsoluteLogError": 0.09336831519449292,
+        "zeroReturnMeanAbsoluteLogError": 0.09336831519449292,
+        "brierScore": 0.254074615927994,
+        "climatologyBrierScore": 0.25515638191534407,
+        "coverage50": 0.48148148148148145,
+        "coverage80": 0.8148148148148148,
+        "meanInterval50Width": 0.1868580908850157,
+        "meanInterval80Width": 0.38655592052509613,
+        "meanInterval50Score": 0.3562500928441633,
+        "meanInterval80Score": 0.551639431359738
+      }
+    },
+    {
+      "group": "1h:remaining",
+      "modelId": "week-vol-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 9,
+        "meanPinballLoss": 0.028930539511851976,
+        "meanAbsoluteLogError": 0.07382237940072751,
+        "zeroReturnMeanAbsoluteLogError": 0.07382237940072751,
+        "brierScore": 0.27224872540643785,
+        "climatologyBrierScore": 0.2523148148148148,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:remaining",
+      "modelId": "week-vol-baseline-v1",
+      "phase": "validation",
+      "summary": {
+        "samples": 9,
+        "meanPinballLoss": 0.021795145548209296,
+        "meanAbsoluteLogError": 0.04792452230073642,
+        "zeroReturnMeanAbsoluteLogError": 0.04792452230073642,
+        "brierScore": 0.24615073319649727,
+        "climatologyBrierScore": 0.25462962962962965,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "4h:remaining",
+      "modelId": "week-vol-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 21,
+        "meanPinballLoss": 0.02924664150135074,
+        "meanAbsoluteLogError": 0.07435002099092454,
+        "zeroReturnMeanAbsoluteLogError": 0.07435002099092454,
+        "brierScore": 0.28324264028957796,
+        "climatologyBrierScore": 0.2658237460916737,
+        "coverage50": 0.5714285714285714,
+        "coverage80": 0.8095238095238095,
+        "meanInterval50Width": 0.14480486325974493,
+        "meanInterval80Width": 0.29298281438149876,
+        "meanInterval50Score": 0.2777598310080672,
+        "meanInterval80Score": 0.43354250634959673
+      }
+    },
+    {
+      "group": "1h:remaining",
+      "modelId": "week-vol-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 4,
+        "meanPinballLoss": 0.009254982372298371,
+        "meanAbsoluteLogError": 0.015957586958946758,
+        "zeroReturnMeanAbsoluteLogError": 0.015957586958946758,
+        "brierScore": 0.3007571178341786,
+        "climatologyBrierScore": 0.2525,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    },
+    {
+      "group": "2h:remaining",
+      "modelId": "week-vol-baseline-v1",
+      "phase": "test",
+      "summary": {
+        "samples": 3,
+        "meanPinballLoss": 0.010644774659822156,
+        "meanAbsoluteLogError": 0.022960485570325706,
+        "zeroReturnMeanAbsoluteLogError": 0.022960485570325706,
+        "brierScore": 0.31835217507283103,
+        "climatologyBrierScore": 0.4533333333333333,
+        "coverage50": null,
+        "coverage80": null,
+        "meanInterval50Width": null,
+        "meanInterval80Width": null,
+        "meanInterval50Score": null,
+        "meanInterval80Score": null
+      }
+    }
+  ]
+}
